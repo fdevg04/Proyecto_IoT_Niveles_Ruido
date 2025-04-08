@@ -1,0 +1,206 @@
+[
+    {
+        "id": "c07454e00e21f444",
+        "type": "tab",
+        "label": "Arquitectura IoT",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "098626b84ada0754",
+        "type": "mqtt in",
+        "z": "c07454e00e21f444",
+        "name": "",
+        "topic": "ciudad/ruido",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "dba75c5f2a58422c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 330,
+        "y": 180,
+        "wires": [
+            [
+                "bd86d9515f1bef77",
+                "2ad0655c3fa148c5",
+                "2254c89f1a6f514f"
+            ]
+        ]
+    },
+    {
+        "id": "bd86d9515f1bef77",
+        "type": "debug",
+        "z": "c07454e00e21f444",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 100,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "667815c37c892e91",
+        "type": "ui_chart",
+        "z": "c07454e00e21f444",
+        "name": "",
+        "group": "b794e607f25a6224",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "label": "Nivel de ruido en tiempo real",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "30",
+        "ymax": "120",
+        "removeOlder": 1,
+        "removeOlderPoints": "1000",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 660,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2ad0655c3fa148c5",
+        "type": "function",
+        "z": "c07454e00e21f444",
+        "name": "Noise",
+        "func": "const umbral = 100; // Define el umbral en decibelios\n\n// Asignar una ubicación aleatoria (provincias de Costa Rica)\nconst provincias = [\"San Jose\", \"Alajuela\", \"Cartago\", \"Heredia\", \"Guanacaste\", \"Puntarenas\", \"Limon\"];\nconst provincia = provincias[Math.floor(Math.random() * provincias.length)]; // Selección aleatoria\n\n// Evaluar si el nivel de ruido excede el umbral\nif (msg.payload.ruido > umbral) {\n    msg.payload = {\n        chat_id: \"1589031873\", // tu chat ID\n        text: \"¡Alerta! Nivel de ruido alto detectado: \" + msg.payload.ruido.toFixed(2) + \" dB en \" + provincia\n    };\n    return msg;\n} else {\n    return null;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 490,
+        "y": 320,
+        "wires": [
+            [
+                "0eed6e4b07c29310"
+            ]
+        ]
+    },
+    {
+        "id": "0eed6e4b07c29310",
+        "type": "http request",
+        "z": "c07454e00e21f444",
+        "name": "",
+        "method": "POST",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://api.telegram.org/bot7579588832:AAHGUBaq5I_wHbsUg2nKcYdaJpwyrNI18iA/sendMessage",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 670,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2254c89f1a6f514f",
+        "type": "function",
+        "z": "c07454e00e21f444",
+        "name": "Extraer ruido",
+        "func": "msg.payload = msg.payload.ruido; // Extrae únicamente el valor del ruido\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 220,
+        "wires": [
+            [
+                "667815c37c892e91"
+            ]
+        ]
+    },
+    {
+        "id": "dba75c5f2a58422c",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "b794e607f25a6224",
+        "type": "ui_group",
+        "name": "Niveles de Ruido",
+        "tab": "a041dcd58880aa6a",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "a041dcd58880aa6a",
+        "type": "ui_tab",
+        "name": "Monitorización",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
